@@ -1429,3 +1429,83 @@ ggplot(data=popss, aes(x=Zone, y=rankPrpnPD, group=Site, shape=Site)) +
   scale_shape_manual(values=c(15, 8, 0, 2)) +
   theme(axis.title.y = element_text(vjust=1, face="bold", size=20),
         axis.text.y  = element_text(size=18, face="bold"))
+
+
+
+#************************************************
+#Correlations
+#**************************
+#by site by zone
+#variables: Height, SIZE, Branches, FR.ALL, D2N
+
+#AR
+cor.test(pop13ls3A1$FR.ALL, pop13ls3A1$logSIZE, method="pearson", na.action="na.omit") #r=0.73 p=<0.0001 ***
+cor.test(pop13ls3A1$FR.ALL, pop13ls3A1$Height, method="pearson", na.action="na.omit") #r=0.62 p=0.00087 **
+cor.test(pop13ls3A1$FR.ALL, pop13ls3A1$logBranches, method="pearson", na.action="na.omit") #r=0.74 p=<0.0001 ***
+cor.test(pop13ls3A1$FR.ALL, pop13ls3A1$logD2N, method="pearson", na.action="na.omit") #r=0.19 p=0.36
+cor.test(pop13ls3A1$logSIZE, pop13ls3A1$logHeight, method="pearson", na.action="na.omit") #r=0.93 p=<0.0001 ***
+cor.test(pop13ls3A1$logSIZE, pop13ls3A1$logBranches, method="pearson", na.action="na.omit") #r=0.78 p=<0.0001 ***
+cor.test(pop13ls3A1$logSIZE, pop13ls3A1$logD2N, method="pearson", na.action="na.omit") #r=0.27 p=0.19
+cor.test(pop13ls3A1$Branches, pop13ls3A1$Height, method="pearson", na.action="na.omit") #r=0.72 p=<0.0001 ***
+cor.test(pop13ls3A1$Branches, pop13ls3A1$logD2N, method="pearson", na.action="na.omit") #r=0.30 p=0.15
+cor.test(pop13ls3A1$rankD2N, pop13ls3A1$logHeight, method="pearson", na.action="na.omit") #r=0.37 p=0.072 .
+
+cor.test(pop13ls3A2$FR.ALL, pop13ls3A2$rankSIZE, method="pearson", na.action="na.omit") #r=0.78 p=0.00011 **
+cor.test(pop13ls3A2$FR.ALL, pop13ls3A2$rankHeight, method="pearson", na.action="na.omit") #r=0.607 p=0.0076 **
+cor.test(pop13ls3A2$logFR.ALL, pop13ls3A2$rankBranches, method="pearson", na.action="na.omit") #r=0.68 p=0.0018 **
+cor.test(pop13ls3A2$logFR.ALL, pop13ls3A2$D2N, method="pearson", na.action="na.omit") #r= -0.033 p=0.90
+cor.test(pop13ls3A2$logSIZE, pop13ls3A2$logHeight, method="pearson", na.action="na.omit") #r=0.89 p=<0.0001 ***
+cor.test(pop13ls3A2$logSIZE, pop13ls3A2$rankBranches, method="pearson", na.action="na.omit") #r=0.71 p=0.00094 **
+cor.test(pop13ls3A2$logSIZE, pop13ls3A2$D2N, method="pearson", na.action="na.omit") #r= -0.16 p=0.52
+cor.test(pop13ls3A2$logBranches, pop13ls3A2$logHeight, method="pearson", na.action="na.omit") #r=0.706 p=0.00106 **
+cor.test(pop13ls3A2$logBranches, pop13ls3A2$logD2N, method="pearson", na.action="na.omit") #r= -0.34 p=0.17
+cor.test(pop13ls3A2$logD2N, pop13ls3A2$logHeight, method="pearson", na.action="na.omit") #r= -0.21 p=0.4005 
+
+
+#BH
+cor.test(pop13ls3B1$logFR.ALL, pop13ls3B1$logSIZE, method="pearson", na.action="na.omit") #r=0.92 p=<0.0001 ***
+cor.test(pop13ls3B1$logFR.ALL, pop13ls3B1$Height, method="pearson", na.action="na.omit") #r=0.92 p=<0.0001 ***
+cor.test(pop13ls3B1$logFR.ALL, pop13ls3B1$Branches, method="pearson", na.action="na.omit") #r=0.79 p=<0.0001 ***
+cor.test(pop13ls3B1$logFR.ALL, pop13ls3B1$D2N, method="pearson", na.action="na.omit") #r=0.30 p=0.15
+cor.test(pop13ls3B1$logSIZE, pop13ls3B1$Height, method="pearson", na.action="na.omit") #r=0.97 p=<0.0001 ***
+cor.test(pop13ls3B1$logSIZE, pop13ls3B1$logBranches, method="pearson", na.action="na.omit") #r=0.85 p=<0.0001 ***
+cor.test(pop13ls3B1$logSIZE, pop13ls3B1$D2N, method="pearson", na.action="na.omit") #r=0.43 p=0.030 *
+cor.test(pop13ls3B1$Branches, pop13ls3B1$Height, method="pearson", na.action="na.omit") #r=0.84 p=<0.0001 ***
+cor.test(pop13ls3B1$Branches, pop13ls3B1$logD2N, method="pearson", na.action="na.omit") #r=0.32 p=0.12
+cor.test(pop13ls3B1$D2N, pop13ls3B1$Height, method="pearson", na.action="na.omit") #r=0.33 p=0.108
+
+cor.test(pop13ls3B2$logFR.ALL, pop13ls3B2$logSIZE, method="pearson", na.action="na.omit") #r=0.85 p=<0.0001 ***
+cor.test(pop13ls3B2$FR.ALL, pop13ls3B2$logHeight, method="pearson", na.action="na.omit") #r=0.66 p=0.00033 **
+cor.test(pop13ls3B2$sqrtFR.ALL, pop13ls3B2$sqrtBranches, method="pearson", na.action="na.omit") #r=0.807 p=<0.0001 ***
+cor.test(pop13ls3B2$logFR.ALL, pop13ls3B2$logD2N, method="pearson", na.action="na.omit") #r=0.45 p=0.024 *
+cor.test(pop13ls3B2$logSIZE, pop13ls3B2$logHeight, method="pearson", na.action="na.omit") #r=0.83 p=<0.0001 ***
+cor.test(pop13ls3B2$logSIZE, pop13ls3B2$logBranches, method="pearson", na.action="na.omit") #r=0.88 p=<0.0001 ***
+cor.test(pop13ls3B2$logSIZE, pop13ls3B2$logD2N, method="pearson", na.action="na.omit") #r=0.53 p=0.0066 **
+cor.test(pop13ls3B2$logBranches, pop13ls3B2$logHeight, method="pearson", na.action="na.omit") #r=0.69 p=0.00013 **
+cor.test(pop13ls3B2$logBranches, pop13ls3B2$logD2N, method="pearson", na.action="na.omit") #r=0.55 p=0.00404 **
+cor.test(pop13ls3B2$logD2N, pop13ls3B2$logHeight, method="pearson", na.action="na.omit") #r=0.405 p=0.045 * 
+
+
+#DB
+cor.test(pop13ls3D1$logFR.ALL, pop13ls3D1$rankSIZE, method="pearson", na.action="na.omit") #r=0.808 p=<0.0001 ***
+cor.test(pop13ls3D1$logFR.ALL, pop13ls3D1$rankHeight, method="pearson", na.action="na.omit") #r=0.51 p=0.029 *
+cor.test(pop13ls3D1$logFR.ALL, pop13ls3D1$logBranches, method="pearson", na.action="na.omit") #r=0.91 p=<0.0001 ***
+cor.test(pop13ls3D1$logFR.ALL, pop13ls3D1$rankD2N, method="pearson", na.action="na.omit") #r=0.30 p=0.23
+cor.test(pop13ls3D1$logSIZE, pop13ls3D1$logHeight, method="pearson", na.action="na.omit") #r=0.702 p=0.0012 **
+cor.test(pop13ls3D1$logSIZE, pop13ls3D1$logBranches, method="pearson", na.action="na.omit") #r=0.804 p=<0.0001 ***
+cor.test(pop13ls3D1$logSIZE, pop13ls3D1$D2N, method="pearson", na.action="na.omit") #r=0.506 p=0.032 *
+cor.test(pop13ls3D1$rankBranches, pop13ls3D1$rankHeight, method="pearson", na.action="na.omit") #r=0.47 p=0.047 *
+cor.test(pop13ls3D1$rankBranches, pop13ls3D1$rankD2N, method="pearson", na.action="na.omit") #r=0.23 p=0.36
+cor.test(pop13ls3D1$rankD2N, pop13ls3D1$logHeight, method="pearson", na.action="na.omit") #r=0.31 p=0.21
+
+cor.test(pop13ls3D2$logFR.ALL, pop13ls3D2$logSIZE, method="pearson", na.action="na.omit") #r=0.43 p=0.012 *
+cor.test(pop13ls3D2$logFR.ALL, pop13ls3D2$logHeight, method="pearson", na.action="na.omit") #r=0.306 p=0.083 .
+cor.test(pop13ls3D2$logFR.ALL, pop13ls3D2$logBranches, method="pearson", na.action="na.omit") #r=0.56 p=0.00068 **
+cor.test(pop13ls3D2$sqrtFR.ALL, pop13ls3D2$D2N, method="pearson", na.action="na.omit") #r= -0.12 p=0.49 
+cor.test(pop13ls3D2$logSIZE, pop13ls3D2$logHeight, method="pearson", na.action="na.omit") #r=0.61 p=0.00017 **
+cor.test(pop13ls3D2$rankSIZE, pop13ls3D2$rankBranches, method="pearson", na.action="na.omit") #r=0.73 p=<0.0001 ***
+cor.test(pop13ls3D2$logSIZE, pop13ls3D2$D2N, method="pearson", na.action="na.omit") #r= -0.32 p=0.068 .
+cor.test(pop13ls3D2$logBranches, pop13ls3D2$logHeight, method="pearson", na.action="na.omit") #r=0.55 p=0.00084 **
+cor.test(pop13ls3D2$rankBranches, pop13ls3D2$logD2N, method="pearson", na.action="na.omit") #r= -0.13 p=0.48 
+cor.test(pop13ls3D2$logD2N, pop13ls3D2$logHeight, method="pearson", na.action="na.omit") #r= -0.39 p=0.024 * 
+
