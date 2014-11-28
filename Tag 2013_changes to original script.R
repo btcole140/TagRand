@@ -1135,20 +1135,16 @@ poptls3x[-c(1),]$sqrtGR  <- sqrt(poptls3x[-c(1),]$GR+0.5)
 poptls3x[-c(1),]$rankGR  <- rank(poptls3x[-c(1),]$GR, na.last="keep")
 
 #lmer testing effect of zone and site(random) on GR
-lme3xgr <- lmer(logGR~Zone+(1+Zone|Site), data=poptls3x[-c(1),])
 lme3xgra <- lmer(logGR~Zone+(1|Site), data=poptls3x[-c(1),])
-anova(lme3xgra, lme3xgr) #Zone is sig, p=0.0018 chisq=12.61, AIC=118.22, AICa=126.83
 lm3xgr <- lm(logGR~Zone, data=poptls3x[-c(1),])
-x <- -2*logLik(lm3xgr, REML=T) +2*logLik(lme3xgr, REML=T)
+x <- -2*logLik(lm3xgr, REML=T) +2*logLik(lme3xgra, REML=T)
 x
 pchisq(x, df=3, lower.tail=F)
-AIC(lm3xgr) #=129.5
-AIC(lme3xgr) #=120.65
-  #logLik=19.58, p=0.0002, random effect of Zone|Site is sig
+#logLik=6.43, p=0.092, random effect of Site marginally non sig
 
 #check assumptions of best model
-lmegrR <- resid(lme3xgr) 
-lmegrF <- fitted(lme3xgr)
+lmegrR <- resid(lme3xgra) 
+lmegrF <- fitted(lme3xgra)
 plot(lmegrF, lmegrR) #not good... log okay
 abline(h=0, col=c("red"))
 hist(lmegrR) #not good... log okay
@@ -1156,12 +1152,12 @@ qqnorm(lmegrR, main="Q-Q plot for residuals")
 qqline(lmegrR) #not good... log okay
 
 #lmer
-lme3xgra <- lmer(logGR~Zone+(1+Zone|Site), data=poptls3x[-c(1),])
+lme3xgra <- lmer(logGR~Zone+(1|Site), data=poptls3x[-c(1),])
 lme3xgra2  <- update(lme3xgra,~.-Zone)
-anova(lme3xgra2, lme3xgra) #Zone not sig p=0.2 chisq=1.67
+anova(lme3xgra2, lme3xgra) #Zone is sig p=0.0016 chisq=9.93
 summary(lme3xgra)
-#random: site var=0.011, zone var=0.69 resid=0.31
-#fixed: intercept=2.068, zone est= -0.69
+#random: site var=0.13, resid=0.39
+#fixed: intercept=1.97, zone est= -0.53
 
 
 #DNU **
@@ -1187,17 +1183,18 @@ summary(lmegrls3xno2)
 #**
 
 GRn <- tapply(poptls3x[-c(1),]$GR, list(poptls3x[-c(1),]$Zone, poptls3x[-c(1),]$Site), length)
+GRn <- tapply(poptls3x[-c(1),]$GR, list(poptls3x[-c(1),]$Zone), length)
 GRmean <- tapply(poptls3x[-c(1),]$GR, list(poptls3x[-c(1),]$Zone, poptls3x[-c(1),]$Site), mean)
 GRsd <- tapply(poptls3x[-c(1),]$GR, list(poptls3x[-c(1),]$Zone, poptls3x[-c(1),]$Site), sd)
 GRCV <- (GRsd/GRmean)*100
 
-poptgr <- summarySE(poptls3x[-c(1),], measurevar="logGR", groupvars=c("Site", "Zone")) 
-ggplot(data=poptgr, aes(x=Zone, y=logGR, group=Site, shape=Site)) +
+poptgr <- summarySE(poptls3x[-c(1),], measurevar="logGR", groupvars="Zone") 
+ggplot(data=poptgr, aes(x=Zone, y=logGR)) +
   geom_errorbar(aes(ymin=logGR-se, ymax=logGR+se), width=0.1, position=position_dodge(0.1)) +
   geom_line(position=position_dodge(0.1)) + geom_point(size=4, position=position_dodge(0.1))+
   xlab("Zone") + ylab(expression(bold(Log[10]~Growth~Rate~(cm^3/day)))) +
   ggtitle("Mean Growth Rate by Zone (LS3x)") +
-  annotate("text", x=c(0.75, 2.25, 0.75, 2.25), y=c(1.99, 1.89, 2.14, 0.85), label=paste("n=",GRn))+
+  annotate("text", x=c(0.75, 2.25), y=c(2.045, 1.504), label=paste("n=",GRn))+
   theme_bw() + theme(legend.justification=c(1,0), legend.position="top", 
                      legend.text=element_text(face="bold", size=18), 
                      legend.title=element_text(face="bold", size=18))+
@@ -1206,20 +1203,10 @@ ggplot(data=poptgr, aes(x=Zone, y=logGR, group=Site, shape=Site)) +
   theme(axis.title.x = element_text(vjust=0.3, face="bold", size=20), 
         axis.text.x  = element_text(vjust=0.3, hjust=0.5, size=18, face="bold"))+
   scale_x_discrete(labels=c("Beach", "Dune")) +
-  scale_shape_manual(values=c(0, 1)) +
   theme(axis.title.y = element_text(vjust=0.8, face="bold", size=20),
         axis.text.y  = element_text(size=18, face="bold"))
 #appears as though the difference is only at MNS
 
-aovgr  <- aov(logGR~Zone:Site, data=poptls3x)
-TukeyHSD(aovgr)
-#                   diff        lwr        upr     p adj
-#2:LH-1:LH   -0.20042778 -0.7065129  0.3056573 0.7223326
-#1:MNS-1:LH   0.05356559 -0.5965125  0.7036437 0.9963031
-#2:MNS-1:LH  -1.24338958 -1.8229705 -0.6638087 0.0000027 *** X
-#1:MNS-2:LH   0.25399337 -0.3760775  0.8840642 0.7112189
-#2:MNS-2:LH  -1.04296180 -1.6000092 -0.4859144 0.0000389 ***
-#2:MNS-1:MNS -1.29695517 -1.9874486 -0.6064618 0.0000367 ***
 
 #DNU **
 #subset data by site, since appears to have beach vs dune diff at MNS
@@ -2394,9 +2381,7 @@ sd(poptls3x$DDFLWF)
 33.048 + (3*19.74) #=92.27, outliers= none
 
 #lm vs lmer
-lme3xdd <- lmer(sqrtDDFLWF~Zone+(1+Zone|Site), data=poptls3x) 
 lme3xdda <- lmer(sqrtDDFLWF~Zone+(1|Site), data=poptls3x)
-anova(lme3xdda, lme3xdd) #Zone not sig, p=0.509 chisq=1.35, AIC=272.12, AICa=269.47
 lm3xdd <- lm(sqrtDDFLWF~Zone, data=poptls3x)
 x <- -2*logLik(lm3xdd, REML=T) +2*logLik(lme3xdda, REML=T)
 x
@@ -2404,6 +2389,7 @@ pchisq(x, df=3, lower.tail=F)
 AIC(lm3xdd) #=271.12
 AIC(lme3xdda) #=268.067
 #logLik=5.32, p=0.15, random effect of site not sig
+
 
 #check assumptions of best model
 lmeddR <- resid(lme3xdda) 

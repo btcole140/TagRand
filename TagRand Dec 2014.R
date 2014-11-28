@@ -43,6 +43,9 @@ pop13ls1  <- subset(pop13, LifeStage == "1")
 pop13ls2  <- subset(pop13, LifeStage == "2")
 pop13ls3  <- subset(pop13, LifeStage == "3")
 
+#subset by sites that seed set was measured
+pop13ls3ss  <- subset(pop13ls3, MsSS == "1")
+
 #subset each ls3 by site and zone (A, B, D, K, L, M, T)
 pop13ls3A  <- subset(pop13ls3, Site == "AR")
 pop13ls3A1  <- subset(pop13ls3A, Zone == "1")
@@ -634,9 +637,9 @@ pop13ls3T2$rankD2N  <- rank(pop13ls3T2$D2N, na.last="keep")
 
 ##PrpnPD
 #ALL ls3
-pop13ls3$logPrpnPD  <- log10(pop13ls3$PrpnPD+1)
-pop13ls3$sqrtPrpnPD  <- sqrt(pop13ls3$PrpnPD+0.5)
-pop13ls3$rankPrpnPD <- rank(pop13ls3$PrpnPD, na.last="keep")
+pop13ls3ss$logPrpnPD  <- log10(pop13ls3ss$PrpnPD+1)
+pop13ls3ss$sqrtPrpnPD  <- sqrt(pop13ls3ss$PrpnPD+0.5)
+pop13ls3ss$rankPrpnPD <- rank(pop13ls3ss$PrpnPD, na.last="keep")
 
 #AR 
 pop13ls3A$logPrpnPD  <- log10(pop13ls3A$PrpnPD+1)
@@ -768,6 +771,10 @@ lmehi <- lmer(Height~Zone+(1+Zone|Site), data=pop13ls3)
 lmehia <- lmer(Height~Zone+(1|Site), data=pop13ls3)
 anova(lmehi, lmehia) #Zone is sig  p=0.00063 chisq=14.75 AIC=2720.2, AICa=2730.9
 lmhi <- lm(Height~Zone, data=pop13ls3)
+x <- -2*logLik(lmhi, REML=T) +2*logLik(lmehia, REML=T)
+x
+pchisq(x, df=3, lower.tail=F)
+#logLik=152.015, p=<0.0001, random Site is sig
 x <- -2*logLik(lmhi, REML=T) +2*logLik(lmehi, REML=T)
 x
 pchisq(x, df=3, lower.tail=F)
@@ -886,6 +893,10 @@ lmesz <- lmer(logSIZE~Zone+(1+Zone|Site), data=pop13ls3)
 lmesza <- lmer(logSIZE~Zone+(1|Site), data=pop13ls3)
 anova(lmesz, lmesza) #Zone is sig p=<0.0001 chisq=25.75 AIC=870.14, AICa=891.89
 lmsz <- lm(logSIZE~Zone, data=pop13ls3)
+x <- -2*logLik(lmsz, REML=T) +2*logLik(lmesza, REML=T)
+x
+pchisq(x, df=3, lower.tail=F)
+#logLik=284.46, p=<0.0001, random Site is sig
 x <- -2*logLik(lmsz, REML=T) +2*logLik(lmesz, REML=T)
 x
 pchisq(x, df=3, lower.tail=F)
@@ -1004,6 +1015,10 @@ lmebr <- lmer(sqrtBranches~Zone+(1+Zone|Site), data=pop13ls3)
 lmebra <- lmer(sqrtBranches~Zone+(1|Site), data=pop13ls3)
 anova(lmebr, lmebra) #Zone is sig p=0.00046 chisq=15.36 AIC=726.12, AICa=737.49
 lmbr <- lm(sqrtBranches~Zone, data=pop13ls3)
+x <- -2*logLik(lmbr, REML=T) +2*logLik(lmebra, REML=T)
+x
+pchisq(x, df=3, lower.tail=F)
+#logLik=163.55, p=<0.0001, random Site is sig
 x <- -2*logLik(lmbr, REML=T) +2*logLik(lmebr, REML=T)
 x
 pchisq(x, df=3, lower.tail=F)
@@ -1123,6 +1138,10 @@ lmefr <- lmer(logFR.ALL~Zone+(1+Zone|Site), data=pop13ls3)
 lmefra <- lmer(logFR.ALL~Zone+(1|Site), data=pop13ls3)
 anova(lmefr, lmefra) #Zone is sig p=0.0035 chisq=11.3 AIC=816.73, AICa=824.03
 lmfr <- lm(logFR.ALL~Zone, data=pop13ls3)
+x <- -2*logLik(lmfr, REML=T) +2*logLik(lmefra, REML=T)
+x
+pchisq(x, df=3, lower.tail=F)
+#logLik=157.31, p=<0.0001, random Site is sig
 x <- -2*logLik(lmfr, REML=T) +2*logLik(lmefr, REML=T)
 x
 pchisq(x, df=3, lower.tail=F)
@@ -1234,10 +1253,14 @@ sd(pop13ls3$D2N, na.rm=TRUE)
 52.0805+(3*58.97) #=228.99, outliers = none
 
 #lmer vs lm
-lmedn <- lmer(pop13ls3$logD2N~Zone+(1+Zone|Site), data=pop13ls3)
-lmedna <- lmer(pop13ls3$logD2N~Zone+(1|Site), data=pop13ls3)
+lmedn <- lmer(logD2N~Zone+(1+Zone|Site), data=pop13ls3)
+lmedna <- lmer(logD2N~Zone+(1|Site), data=pop13ls3)
 anova(lmedn, lmedna) #Zone is sig p=<0.0001 chisq=75.65 AIC=186.04, AICa=257.68
-lmdn <- lm(pop13ls3$logD2N~Zone, data=pop13ls3)
+lmdn <- lm(logD2N~Zone, data=pop13ls3)
+x <- -2*logLik(lmdn, REML=T) +2*logLik(lmedna, REML=T)
+x
+pchisq(x, df=3, lower.tail=F)
+#logLik=71.92, p=<0.0001, random Site is sig
 x <- -2*logLik(lmdn, REML=T) +2*logLik(lmedn, REML=T)
 x
 pchisq(x, df=3, lower.tail=F)
@@ -1255,7 +1278,7 @@ qqnorm(lmednR, main="Q-Q plot for residuals")
 qqline(lmednR) #sqrt okay but not great, long tails... log better
 
 #lmer
-lmedn <- lmer(pop13ls3$logD2N~Zone+(1+Zone|Site), data=pop13ls3)
+lmedn <- lmer(logD2N~Zone+(1+Zone|Site), data=pop13ls3)
 lmedn2  <- update(lmedn,~.-Zone)
 anova(lmedn2, lmedn) #Zone is sig p=0.0012 chisq=10.5
 summary(lmedn)
@@ -1290,3 +1313,119 @@ ggplot(data=popdn, aes(x=Zone, y=logD2N, group=Site, shape=Site)) +
   theme(axis.title.y = element_text(vjust=1, face="bold", size=20),
         axis.text.y  = element_text(size=18, face="bold"))
 
+
+#********************
+##Response Variable: PrpnPD (different dataset = pop13ls3ss)
+#boxplot
+ggplot(data=pop13ls3ss, aes(x=Zone, y=PrpnPD))+
+  geom_boxplot(width=0.8, position="dodge")+ 
+  ylab("Seed Set Ratio") +
+  ggtitle("PrpnPD by Zone LS3")+
+  theme_bw() + theme(legend.justification=c(1,0), legend.position="top", 
+                     legend.text=element_text(face="bold", size=18), 
+                     legend.title=element_text(face="bold", size=18))+
+  theme(axis.title.x = element_text(vjust=0.3, face="bold", size=20), 
+        axis.text.x  = element_text(vjust=0.3, hjust=0.5, size=18, face="bold"))+
+  theme(axis.title.y = element_text(vjust=1, face="bold", size=20),
+        axis.text.y  = element_text(size=18, face="bold"))
+#NOTE: a lot of overlap and similar means
+
+ggplot(data=pop13ls3ss, aes(x=Site, y=PrpnPD))+
+  geom_point(aes(shape=Zone), width=0.8, position="dodge")+ 
+  ylab("Seed Set Ratio") +
+  ggtitle("PrpnPD by Site")+
+  theme_bw() + theme(legend.justification=c(1,0), legend.position="top", 
+                     legend.text=element_text(face="bold", size=18), 
+                     legend.title=element_text(face="bold", size=18))+
+  theme(axis.title.x = element_text(vjust=0.3, face="bold", size=20), 
+        axis.text.x  = element_text(vjust=0.3, hjust=0.5, size=18, face="bold"))+
+  theme(axis.title.y = element_text(vjust=1, face="bold", size=20),
+        axis.text.y  = element_text(size=18, face="bold"))
+#possible outliers in LH1
+
+#create plot using summarySE function output 
+popss <- summarySE(pop13ls3ss, measurevar="PrpnPD", groupvars=c("Site", "Zone")) 
+ggplot(data=popss, aes(x=Zone, y=PrpnPD, group=Site, shape=Site)) +
+  geom_errorbar(aes(ymin=PrpnPD-se, ymax=PrpnPD+se), width=0.1, position=position_dodge(0.3)) +
+  geom_line(position=position_dodge(0.3)) + geom_point(size=4, position=position_dodge(0.3))+
+  xlab("Zone") + ylab("Seed Set Ratio") +
+  ggtitle("Mean PrpnPD by Zone") +
+  theme_bw() + theme(legend.justification=c(1,0), legend.position="top", 
+                     legend.text=element_text(face="bold", size=18), 
+                     legend.title=element_text(face="bold", size=18))+
+  theme(strip.text.x = element_text(size=20, face="bold"))+
+  theme(strip.text.y = element_text(size=20, face="bold")) +
+  theme(axis.title.x = element_text(vjust=0.3, face="bold", size=20), 
+        axis.text.x  = element_text(vjust=0.3, hjust=0.5, size=18, face="bold"))+
+  scale_x_discrete(labels=c("Beach", "Dune")) +
+  scale_shape_manual(values=c(15, 8, 0, 2))+
+  theme(axis.title.y = element_text(vjust=1, face="bold", size=20),
+        axis.text.y  = element_text(size=18, face="bold"))
+
+#distribution
+hist(pop13ls3ss$PrpnPD) #one tall column at left
+hist(pop13ls3ss$logPrpnPD) #sqrt is better, log is not a good as sqrt
+
+#outliers
+mean(pop13ls3ss$PrpnPD, na.rm=TRUE)
+sd(pop13ls3ss$PrpnPD, na.rm=TRUE)
+0.76+(3*0.39) #=1.93, outliers = none
+
+#lmer vs lm
+lmess <- lmer(rankPrpnPD~Zone+(1+Zone|Site), data=pop13ls3ss)
+lmessa <- lmer(rankPrpnPD~Zone+(1|Site), data=pop13ls3ss)
+anova(lmess, lmessa) #Zone is sig p=0.028 chisq=7.15 AIC=112.66, AICa=118.36
+lmss <- lm(rankPrpnPD~Zone, data=pop13ls3ss)
+x <- -2*logLik(lmss, REML=T) +2*logLik(lmessa, REML=T)
+x
+pchisq(x, df=3, lower.tail=F)
+#logLik=54.0108, p=<0.0001, random Site is sig
+x <- -2*logLik(lmss, REML=T) +2*logLik(lmess, REML=T)
+x
+pchisq(x, df=3, lower.tail=F)
+AIC(lmss) #=1587.67
+AIC(lmess) #=1521.18
+#logLik=62.48, p=<0.0001, random Zone|Site is sig
+
+#check assumptions of best model
+lmessR <- resid(lmess) 
+lmessF <- fitted(lmess)
+plot(lmessF, lmessR) #okay... sqrt good
+abline(h=0, col=c("red"))
+hist(lmessR) #okay... sqrt good
+qqnorm(lmessR, main="Q-Q plot for residuals") 
+qqline(lmessR) #Sshaped... sqrt not much better... rank is best
+
+
+#lmer
+lmess <- lmer(rankPrpnPD~Zone+(1+Zone|Site), data=pop13ls3ss)
+lmess2  <- update(lmess,~.-Zone)
+anova(lmess2, lmess) #Zone not sig p=0.36 chisq=0.84
+
+pop13ls3ss$Site  <- pop13ls3ss$Site[drop=TRUE]
+
+ssn <- tapply(pop13ls3ss$rankPrpnPD, list(pop13ls3ss$Zone, pop13ls3ss$Site), length)
+ssmean <- tapply(pop13ls3ss$rankPrpnPD, list(pop13ls3ss$Zone, pop13ls3ss$Site), mean)
+sssd <- tapply(pop13ls3ss$rankPrpnPD, list(pop13ls3ss$Zone, pop13ls3ss$Site), sd)
+ssCV <- (sssd/ssmean)*100
+
+popss <- summarySE(pop13ls3ss, measurevar="rankPrpnPD", groupvars=c("Site", "Zone")) 
+ggplot(data=popss, aes(x=Zone, y=rankPrpnPD, group=Site, shape=Site)) +
+  geom_errorbar(aes(ymin=rankPrpnPD-se, ymax=rankPrpnPD+se), width=0.1, position=position_dodge(0.1)) +
+  geom_line(position=position_dodge(0.1)) + geom_point(size=4, position=position_dodge(0.1))+
+  xlab("Zone") + ylab("Ranked Seed Set Ratio \n(proximal:distal)") +
+  ggtitle("Mean rankPrpnPD by Zone") +
+  annotate("text", x=c(0.75, 2.25, 0.75, 2.25, 0.75, 2.25, 0.75, 2.25), 
+           y=c(90.82, 77.13, 107.62, 107.075, 101.22, 57.705, 30.075, 45.58), 
+           label=paste("n=",ssn)) +
+  theme_bw() + theme(legend.justification=c(1,0), legend.position="top", 
+                     legend.text=element_text(face="bold", size=18), 
+                     legend.title=element_text(face="bold", size=18)) +
+  theme(strip.text.x = element_text(size=20, face="bold")) +
+  theme(strip.text.y = element_text(size=20, face="bold")) +
+  theme(axis.title.x = element_text(vjust=0.3, face="bold", size=20), 
+        axis.text.x  = element_text(vjust=0.3, hjust=0.5, size=18, face="bold")) +
+  scale_x_discrete(labels=c("Beach", "Dune")) +
+  scale_shape_manual(values=c(15, 8, 0, 2)) +
+  theme(axis.title.y = element_text(vjust=1, face="bold", size=20),
+        axis.text.y  = element_text(size=18, face="bold"))
