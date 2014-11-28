@@ -1060,10 +1060,10 @@ ggplot(data=popbr, aes(x=Zone, y=sqrtBranches, group=Site, shape=Site)) +
 #********************
 ##Response Variable: FR.ALL
 #boxplot
-ggplot(data=pop13ls3, aes(x=Zone, y=Branches))+
+ggplot(data=pop13ls3, aes(x=Zone, y=FR.ALL))+
   geom_boxplot(width=0.8, position="dodge")+ 
-  ylab("Size (cm)") +
-  ggtitle("Branches by Zone LS3")+
+  ylab("Fitness") +
+  ggtitle("FR.ALL by Zone LS3")+
   theme_bw() + theme(legend.justification=c(1,0), legend.position="top", 
                      legend.text=element_text(face="bold", size=18), 
                      legend.title=element_text(face="bold", size=18))+
@@ -1071,12 +1071,13 @@ ggplot(data=pop13ls3, aes(x=Zone, y=Branches))+
         axis.text.x  = element_text(vjust=0.3, hjust=0.5, size=18, face="bold"))+
   theme(axis.title.y = element_text(vjust=1, face="bold", size=20),
         axis.text.y  = element_text(size=18, face="bold"))
-#NOTE: overlap, but different means
+#NOTE: overlap, but different means, more variation in beach
+  #possible outliers
 
-ggplot(data=pop13ls3, aes(x=Site, y=Branches))+
+ggplot(data=pop13ls3, aes(x=Site, y=FR.ALL))+
   geom_point(aes(shape=Zone), width=0.8, position="dodge")+ 
-  ylab("Branches") +
-  ggtitle("Branches by Site")+
+  ylab("Fitness") +
+  ggtitle("FR.ALL by Site")+
   theme_bw() + theme(legend.justification=c(1,0), legend.position="top", 
                      legend.text=element_text(face="bold", size=18), 
                      legend.title=element_text(face="bold", size=18))+
@@ -1084,15 +1085,15 @@ ggplot(data=pop13ls3, aes(x=Site, y=Branches))+
         axis.text.x  = element_text(vjust=0.3, hjust=0.5, size=18, face="bold"))+
   theme(axis.title.y = element_text(vjust=1, face="bold", size=20),
         axis.text.y  = element_text(size=18, face="bold"))
-#no outliers
+#low outliers in BH1, LH1, and TH1
 
 #create plot using summarySE function output 
-popbr <- summarySE(pop13ls3, measurevar="Branches", groupvars=c("Site", "Zone")) 
-ggplot(data=popbr, aes(x=Zone, y=Branches, group=Site, shape=Site)) +
-  geom_errorbar(aes(ymin=Branches-se, ymax=Branches+se), width=0.1, position=position_dodge(0.3)) +
+popf <- summarySE(pop13ls3, measurevar="FR.ALL", groupvars=c("Site", "Zone")) 
+ggplot(data=popf, aes(x=Zone, y=FR.ALL, group=Site, shape=Site)) +
+  geom_errorbar(aes(ymin=FR.ALL-se, ymax=FR.ALL+se), width=0.1, position=position_dodge(0.3)) +
   geom_line(position=position_dodge(0.3)) + geom_point(size=4, position=position_dodge(0.3))+
-  xlab("Zone") + ylab("Number of Branches") +
-  ggtitle("Mean Branches by Zone") +
+  xlab("Zone") + ylab("Fitness") +
+  ggtitle("Mean FR.ALL by Zone") +
   theme_bw() + theme(legend.justification=c(1,0), legend.position="top", 
                      legend.text=element_text(face="bold", size=18), 
                      legend.title=element_text(face="bold", size=18))+
@@ -1106,34 +1107,186 @@ ggplot(data=popbr, aes(x=Zone, y=Branches, group=Site, shape=Site)) +
         axis.text.y  = element_text(size=18, face="bold"))
 
 #distribution
-hist(pop13ls3$Branches) #one tall column at left
-hist(pop13ls3$sqrtBranches) #better
+hist(pop13ls3$FR.ALL) #one tall column at left
+hist(pop13ls3$logFR.ALL) #better
 
 #outliers
-mean(pop13ls3$Branches, na.rm=TRUE)
-sd(pop13ls3$Branches, na.rm=TRUE)
-6.64+(3*4.27) #=19.45, outliers = 266
-mean(pop13ls3[-c(266),]$Branches, na.rm=TRUE)
-sd(pop13ls3[-c(266),]$Branches, na.rm=TRUE)
-6.602+(3*4.22) #=19.26, outliers = none
+mean(pop13ls3$FR.ALL, na.rm=TRUE)
+sd(pop13ls3$FR.ALL, na.rm=TRUE)
+419.88+(3*695.25) #=2505.63, outliers = 49, 302, 243, 268, 269, 67, 248, 260, 273, 252
+mean(pop13ls3[-c(49, 302, 243, 268, 269, 67, 248, 260, 273, 252),]$FR.ALL, na.rm=TRUE)
+sd(pop13ls3[-c(49, 302, 243, 268, 269, 67, 248, 260, 273, 252),]$FR.ALL, na.rm=TRUE)
+349.59+(3*546.38) #=1988.73, outliers = 266, 259, 165, 238, 168
 
 #lmer vs lm
-lmebr <- lmer(sqrtBranches~Zone+(1+Zone|Site), data=pop13ls3)
-lmebra <- lmer(sqrtBranches~Zone+(1|Site), data=pop13ls3)
-anova(lmebr, lmebra) #Zone is sig p=0.00046 chisq=15.36 AIC=726.12, AICa=737.49
-lmbr <- lm(sqrtBranches~Zone, data=pop13ls3)
-x <- -2*logLik(lmbr, REML=T) +2*logLik(lmebr, REML=T)
+lmefr <- lmer(logFR.ALL~Zone+(1+Zone|Site), data=pop13ls3)
+lmefra <- lmer(logFR.ALL~Zone+(1|Site), data=pop13ls3)
+anova(lmefr, lmefra) #Zone is sig p=0.0035 chisq=11.3 AIC=816.73, AICa=824.03
+lmfr <- lm(logFR.ALL~Zone, data=pop13ls3)
+x <- -2*logLik(lmfr, REML=T) +2*logLik(lmefr, REML=T)
 x
 pchisq(x, df=3, lower.tail=F)
-AIC(lmbr) #=896.36
-AIC(lmebr) #=729.58
-#logLik=180.64, p=<0.0001, random Zone|Site is sig
+AIC(lmfr) #=976.71
+AIC(lmefr) #=820.083
+#logLik=170.067, p=<0.0001, random Zone|Site is sig
 
 #check assumptions of best model
-lmebrR <- resid(lmebr) 
-lmebrF <- fitted(lmebr)
-plot(lmebrF, lmebrR) #raw not good, sqrt good
+lmefrR <- resid(lmefr) 
+lmefrF <- fitted(lmefr)
+plot(lmefrF, lmefrR) #raw not good, log good
 abline(h=0, col=c("red"))
-hist(lmebrR) #raw not good, sqrt good
-qqnorm(lmebrR, main="Q-Q plot for residuals") 
-qqline(lmebrR) #raw not good, sqrt good
+hist(lmefrR) #raw not good, log okay, skew right
+qqnorm(lmefrR, main="Q-Q plot for residuals") 
+qqline(lmefrR) #raw not good, log okay, tails at each end
+
+#lmer
+lmefr <- lmer(logFR.ALL~Zone+(1+Zone|Site), data=pop13ls3)
+lmefr2  <- update(lmefr,~.-Zone)
+anova(lmefr2, lmefr) #Zone is sig p=0.0021 chisq=9.42
+summary(lmefr)
+#random: site var=0.28, zone var=0.14, resid=0.44
+#fixed: intercept=2.19, zone est= -0.64
+
+frn <- tapply(pop13ls3$FR.ALL, list(pop13ls3$Zone, pop13ls3$Site), length)
+frmean <- tapply(pop13ls3$FR.ALL, list(pop13ls3$Zone, pop13ls3$Site), mean)
+frsd <- tapply(pop13ls3$FR.ALL, list(pop13ls3$Zone, pop13ls3$Site), sd)
+frCV <- (frsd/frmean)*100
+
+popfr <- summarySE(pop13ls3, measurevar="logFR.ALL", groupvars=c("Site", "Zone")) 
+ggplot(data=popfr, aes(x=Zone, y=logFR.ALL, group=Site, shape=Site)) +
+  geom_errorbar(aes(ymin=logFR.ALL-se, ymax=logFR.ALL+se), width=0.1, position=position_dodge(0.1)) +
+  geom_line(position=position_dodge(0.1)) + geom_point(size=4, position=position_dodge(0.1))+
+  xlab("Zone") + ylab(expression(bold(Log[10]~Fitness))) +
+  ggtitle("Mean logFR.ALL by Zone") +
+  annotate("text", x=c(0.65, 2.25, 0.65, 2.25, 0.85, 2.25, 0.85, 2.25, 0.85, 2.25,
+                       0.85, 2.45, 0.85, 2.25), 
+           y=c(2.25, 1.96, 2.37, 1.078, 1.09, 0.54, 2.13, 2.07, 2.37, 1.85, 
+               2.25, 1.084, 2.93, 2.21), 
+           label=paste("n=",frn)) +
+  theme_bw() + theme(legend.justification=c(1,0), legend.position="top", 
+                     legend.text=element_text(face="bold", size=18), 
+                     legend.title=element_text(face="bold", size=18)) +
+  theme(strip.text.x = element_text(size=20, face="bold")) +
+  theme(strip.text.y = element_text(size=20, face="bold")) +
+  theme(axis.title.x = element_text(vjust=0.3, face="bold", size=20), 
+        axis.text.x  = element_text(vjust=0.3, hjust=0.5, size=18, face="bold")) +
+  scale_x_discrete(labels=c("Beach", "Dune")) +
+  scale_shape_manual(values=c(15, 16, 17, 8, 0, 1, 2)) +
+  theme(axis.title.y = element_text(vjust=1, face="bold", size=20),
+        axis.text.y  = element_text(size=18, face="bold"))
+
+
+#********************
+##Response Variable: D2N
+#boxplot
+ggplot(data=pop13ls3, aes(x=Zone, y=D2N))+
+  geom_boxplot(width=0.8, position="dodge")+ 
+  ylab("Dist. to Neighbour") +
+  ggtitle("D2N by Zone LS3")+
+  theme_bw() + theme(legend.justification=c(1,0), legend.position="top", 
+                     legend.text=element_text(face="bold", size=18), 
+                     legend.title=element_text(face="bold", size=18))+
+  theme(axis.title.x = element_text(vjust=0.3, face="bold", size=20), 
+        axis.text.x  = element_text(vjust=0.3, hjust=0.5, size=18, face="bold"))+
+  theme(axis.title.y = element_text(vjust=1, face="bold", size=20),
+        axis.text.y  = element_text(size=18, face="bold"))
+#NOTE: no overlap (aside from error bars),  different means, more variation in beach
+
+ggplot(data=pop13ls3, aes(x=Site, y=D2N))+
+  geom_point(aes(shape=Zone), width=0.8, position="dodge")+ 
+  ylab("Dist. to Neighbour") +
+  ggtitle("D2N by Site")+
+  theme_bw() + theme(legend.justification=c(1,0), legend.position="top", 
+                     legend.text=element_text(face="bold", size=18), 
+                     legend.title=element_text(face="bold", size=18))+
+  theme(axis.title.x = element_text(vjust=0.3, face="bold", size=20), 
+        axis.text.x  = element_text(vjust=0.3, hjust=0.5, size=18, face="bold"))+
+  theme(axis.title.y = element_text(vjust=1, face="bold", size=20),
+        axis.text.y  = element_text(size=18, face="bold"))
+#outliers with values of 150
+
+#create plot using summarySE function output 
+popdn <- summarySE(pop13ls3, measurevar="D2N", groupvars=c("Site", "Zone")) 
+ggplot(data=popdn, aes(x=Zone, y=D2N, group=Site, shape=Site)) +
+  geom_errorbar(aes(ymin=D2N-se, ymax=D2N+se), width=0.1, position=position_dodge(0.3)) +
+  geom_line(position=position_dodge(0.3)) + geom_point(size=4, position=position_dodge(0.3))+
+  xlab("Zone") + ylab("Dist. to Neighbour") +
+  ggtitle("Mean D2N by Zone") +
+  theme_bw() + theme(legend.justification=c(1,0), legend.position="top", 
+                     legend.text=element_text(face="bold", size=18), 
+                     legend.title=element_text(face="bold", size=18))+
+  theme(strip.text.x = element_text(size=20, face="bold"))+
+  theme(strip.text.y = element_text(size=20, face="bold")) +
+  theme(axis.title.x = element_text(vjust=0.3, face="bold", size=20), 
+        axis.text.x  = element_text(vjust=0.3, hjust=0.5, size=18, face="bold"))+
+  scale_x_discrete(labels=c("Beach", "Dune")) +
+  scale_shape_manual(values=c(15, 16, 17, 8, 0, 1, 2))+
+  theme(axis.title.y = element_text(vjust=1, face="bold", size=20),
+        axis.text.y  = element_text(size=18, face="bold"))
+
+#distribution
+hist(pop13ls3$D2N) #one tall column at left
+hist(pop13ls3$sqrtD2N) #sqrt a bit better, with a tall column at right (150 values)
+
+#outliers
+mean(pop13ls3$D2N, na.rm=TRUE)
+sd(pop13ls3$D2N, na.rm=TRUE)
+52.0805+(3*58.97) #=228.99, outliers = none
+
+#lmer vs lm
+lmedn <- lmer(pop13ls3$logD2N~Zone+(1+Zone|Site), data=pop13ls3)
+lmedna <- lmer(pop13ls3$logD2N~Zone+(1|Site), data=pop13ls3)
+anova(lmedn, lmedna) #Zone is sig p=<0.0001 chisq=75.65 AIC=186.04, AICa=257.68
+lmdn <- lm(pop13ls3$logD2N~Zone, data=pop13ls3)
+x <- -2*logLik(lmdn, REML=T) +2*logLik(lmedn, REML=T)
+x
+pchisq(x, df=3, lower.tail=F)
+AIC(lmdn) #=325.35
+AIC(lmedn) #=192.056
+#logLik=149.47, p=<0.0001, random Zone|Site is sig
+
+#check assumptions of best model
+lmednR <- resid(lmedn) 
+lmednF <- fitted(lmedn)
+plot(lmednF, lmednR) #sqrt not great... log okay
+abline(h=0, col=c("red"))
+hist(lmednR) #sqrt okay... log better
+qqnorm(lmednR, main="Q-Q plot for residuals") 
+qqline(lmednR) #sqrt okay but not great, long tails... log better
+
+#lmer
+lmedn <- lmer(pop13ls3$logD2N~Zone+(1+Zone|Site), data=pop13ls3)
+lmedn2  <- update(lmedn,~.-Zone)
+anova(lmedn2, lmedn) #Zone is sig p=0.0012 chisq=10.5
+summary(lmedn)
+#random: site var=0.16, zone var=0.13, resid=0.09
+#fixed: intercept=1.76, zone est= -0.65
+
+dnn <- tapply(pop13ls3$D2N, list(pop13ls3$Zone, pop13ls3$Site), length)
+dnmean <- tapply(pop13ls3$D2N, list(pop13ls3$Zone, pop13ls3$Site), mean)
+dnsd <- tapply(pop13ls3$D2N, list(pop13ls3$Zone, pop13ls3$Site), sd)
+dnCV <- (dnsd/dnmean)*100
+
+popdn <- summarySE(pop13ls3, measurevar="logD2N", groupvars=c("Site", "Zone")) 
+ggplot(data=popdn, aes(x=Zone, y=logD2N, group=Site, shape=Site)) +
+  geom_errorbar(aes(ymin=logD2N-se, ymax=logD2N+se), width=0.1, position=position_dodge(0.1)) +
+  geom_line(position=position_dodge(0.1)) + geom_point(size=4, position=position_dodge(0.1))+
+  xlab("Zone") + ylab(expression(bold(Log[10]~Distance~to~Neighbour~(cm)))) +
+  ggtitle("Mean logD2N by Zone") +
+  annotate("text", x=c(0.55, 2.25, 0.75, 2.45, 0.75, 2.25, 0.75, 2.25, 0.75, 2.25,
+                       0.75, 2.25, 0.75, 2.45), 
+           y=c(2.082, 1.063, 1.96, 1.063, 0.92, 0.93, 1.88, 1.44, 1.63, 1.13, 
+               1.75, 1.00, 2.087, 1.13), 
+           label=paste("n=",dnn)) +
+  theme_bw() + theme(legend.justification=c(1,0), legend.position="top", 
+                     legend.text=element_text(face="bold", size=18), 
+                     legend.title=element_text(face="bold", size=18)) +
+  theme(strip.text.x = element_text(size=20, face="bold")) +
+  theme(strip.text.y = element_text(size=20, face="bold")) +
+  theme(axis.title.x = element_text(vjust=0.3, face="bold", size=20), 
+        axis.text.x  = element_text(vjust=0.3, hjust=0.5, size=18, face="bold")) +
+  scale_x_discrete(labels=c("Beach", "Dune")) +
+  scale_shape_manual(values=c(15, 16, 17, 8, 0, 1, 2)) +
+  theme(axis.title.y = element_text(vjust=1, face="bold", size=20),
+        axis.text.y  = element_text(size=18, face="bold"))
+
