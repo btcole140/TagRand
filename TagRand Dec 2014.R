@@ -1401,6 +1401,9 @@ qqline(lmessR) #Sshaped... sqrt not much better... rank is best
 lmess <- lmer(rankPrpnPD~Zone+(1+Zone|Site), data=pop13ls3ss)
 lmess2  <- update(lmess,~.-Zone)
 anova(lmess2, lmess) #Zone not sig p=0.36 chisq=0.84
+summary(lmess)
+#random: site var=1209.2, zone var=521.7, resid=1098.0
+#fixed: intercept=82.36, zone= -10.59
 
 pop13ls3ss$Site  <- pop13ls3ss$Site[drop=TRUE]
 
