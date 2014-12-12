@@ -1189,11 +1189,11 @@ summary(lmegrls3xno2)
 #Fixed: Intercept=1.9862, zone est=-0.5932 tvalue=-1.6010
 #**
 
-GRn <- tapply(poptls3x[-c(1),]$GR, list(poptls3x[-c(1),]$Zone, poptls3x[-c(1),]$Site), length)
-GRn <- tapply(poptls3x[-c(1),]$GR, list(poptls3x[-c(1),]$Zone), length)
-GRmean <- tapply(poptls3x[-c(1),]$GR, list(poptls3x[-c(1),]$Zone, poptls3x[-c(1),]$Site), mean)
-GRsd <- tapply(poptls3x[-c(1),]$GR, list(poptls3x[-c(1),]$Zone, poptls3x[-c(1),]$Site), sd)
-GRCV <- (GRsd/GRmean)*100
+tGRn <- tapply(poptls3x[-c(1),]$GR, list(poptls3x[-c(1),]$Zone, poptls3x[-c(1),]$Site), length)
+tGRn <- tapply(poptls3x[-c(1),]$GR, list(poptls3x[-c(1),]$Zone), length)
+tGRmean <- tapply(poptls3x[-c(1),]$GR, list(poptls3x[-c(1),]$Zone, poptls3x[-c(1),]$Site), mean)
+tGRsd <- tapply(poptls3x[-c(1),]$GR, list(poptls3x[-c(1),]$Zone, poptls3x[-c(1),]$Site), sd)
+tGRCV <- (GRsd/GRmean)*100
 
 poptgr <- summarySE(poptls3x[-c(1),], measurevar="logGR", groupvars=c("Site", "Zone")) 
 ggplot(data=poptgr, aes(x=Zone, y=logGR, group=Site, shape=Site)) +
@@ -1201,7 +1201,7 @@ ggplot(data=poptgr, aes(x=Zone, y=logGR, group=Site, shape=Site)) +
   geom_line(position=position_dodge(0.1)) + geom_point(size=4, position=position_dodge(0.1))+
   xlab("Zone") + ylab(expression(bold(Log[10]~Growth~Rate~(cm^3/day)))) +
   ggtitle("Mean Growth Rate by Zone (LS3x)") +
-  annotate("text", x=c(0.75, 2.25, 0.75, 2.25), y=c(1.99, 1.89, 2.14, 0.85), label=paste("n=",GRn))+
+  annotate("text", x=c(0.75, 2.25, 0.75, 2.25), y=c(1.99, 1.89, 2.14, 0.85), label=paste("n=",tGRn))+
   theme_bw() + theme(legend.justification=c(1,0), legend.position="top", 
                      legend.text=element_text(face="bold", size=18), 
                      legend.title=element_text(face="bold", size=18))+
@@ -2389,7 +2389,9 @@ sd(poptls3x$DDFLWF)
 33.048 + (3*19.74) #=92.27, outliers= none
 
 #lm vs lmer
+lme3xdd <- lmer(sqrtDDFLWF~Zone+(1+Zone|Site), data=poptls3x)
 lme3xdda <- lmer(sqrtDDFLWF~Zone+(1|Site), data=poptls3x)
+anova(lme3xdd, lme3xdda) #Zone not sig p=0.51 chisq=1.35
 lm3xdd <- lm(sqrtDDFLWF~Zone, data=poptls3x)
 x <- -2*logLik(lm3xdd, REML=T) +2*logLik(lme3xdda, REML=T)
 x
@@ -2398,11 +2400,16 @@ AIC(lm3xdd) #=271.12
 AIC(lme3xdda) #=268.067
 #logLik=5.32, p=0.15, random effect of site not sig
 0.5*(1-pchisq(5.32, 3)) #=0.075
+x <- -2*logLik(lm3xdd, REML=T) +2*logLik(lme3xdd, REML=T)
+x
+pchisq(x, df=3, lower.tail=F)
+#logLik=6.83, p=0.077, random effect of zone|site not sig
+0.5*(1-pchisq(6.83, 3)) #=0.039
 
 
 #check assumptions of best model
-lmeddR <- resid(lme3xdda) 
-lmeddF <- fitted(lme3xdda)
+lmeddR <- resid(lme3xdd) 
+lmeddF <- fitted(lme3xdd)
 plot(lmeddF, lmeddR) #not the best, but okay... sqrt okay
 abline(h=0, col=c("red"))
 hist(lmeddR) #okay... sqrt okay
@@ -2410,12 +2417,12 @@ qqnorm(lmeddR, main="Q-Q plot for residuals")
 qqline(lmeddR) #not great, but okay... sqrt the same
 
 #lmer
-lme3xdda <- lmer(sqrtDDFLWF~Zone+(1|Site), data=poptls3x)
+lme3xdd <- lmer(sqrtDDFLWF~Zone+(1+Zone|Site), data=poptls3x)
 lme3xdda2  <- update(lme3xdda,~.-Zone)
-anova(lme3xdda2, lme3xdda) #Zone not sig p=0.58 chisq=0.308
-summary(lme3xdda)
-#random: site var=1.086, resid=3.84
-#fixed: intercept=5.36, zone est= -0.27
+anova(lme3xdda2, lme3xdd) #Zone not sig p=0.65 chisq=1.66
+summary(lme3xdd)
+#random: site var=2.50, resid=0.83
+#fixed: intercept=5.24, zone est= -0.084
 
 tddn <- tapply(poptls3x$DDFLWF, list(poptls3x$Zone, poptls3x$Site), length)
 tddn <- tapply(poptls3x$DDFLWF, list(poptls3x$Zone), length)
@@ -2423,8 +2430,9 @@ tddmean <- tapply(poptls3x$DDFLWF, list(poptls3x$Zone, poptls3x$Site), mean)
 tddsd <- tapply(poptls3x$DDFLWF, list(poptls3x$Zone, poptls3x$Site), sd)
 tddCV <- (tddsd/tddmean)*100
 
-poptdd <- summarySE(poptls3x, measurevar="sqrtDDFLWF", groupvars="Zone") 
-ggplot(data=poptdd, aes(x=Zone, y=sqrtDDFLWF)) +
+poptdd <- summarySE(poptls3x, measurevar="sqrtDDFLWF", groupvars=c("Site", "Zone")) 
+poptdd2 <- summarySE(poptls3x, measurevar="sqrtDDFLWF", groupvars="Zone") 
+ggplot(data=poptdd2, aes(x=Zone, y=sqrtDDFLWF)) +
   geom_errorbar(aes(ymin=sqrtDDFLWF-se, ymax=sqrtDDFLWF+se), width=0.1, position=position_dodge(0.1)) +
   geom_line(position=position_dodge(0.1)) + geom_point(size=4, position=position_dodge(0.1))+
   xlab("Zone") + ylab(expression(bold(sqrt(Flowering~Duration~(days))))) +
