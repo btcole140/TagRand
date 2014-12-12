@@ -1285,9 +1285,9 @@ summary(lmedn)
 #random: site var=0.16, zone var=0.13, resid=0.09
 #fixed: intercept=1.76, zone est= -0.65
 
-dnn <- tapply(pop13ls3$D2N, list(pop13ls3$Zone, pop13ls3$Site), length)
-dnmean <- tapply(pop13ls3$D2N, list(pop13ls3$Zone, pop13ls3$Site), mean)
-dnsd <- tapply(pop13ls3$D2N, list(pop13ls3$Zone, pop13ls3$Site), sd)
+dnn <- tapply(pop13ls3[!is.na(pop13ls3$D2N),]$D2N, list(pop13ls3[!is.na(pop13ls3$D2N),]$Zone, pop13ls3[!is.na(pop13ls3$D2N),]$Site), length)
+dnmean <- tapply(pop13ls3[!is.na(pop13ls3$D2N),]$D2N, list(pop13ls3[!is.na(pop13ls3$D2N),]$Zone, pop13ls3[!is.na(pop13ls3$D2N),]$Site), mean)
+dnsd <- tapply(pop13ls3[!is.na(pop13ls3$D2N),]$D2N, list(pop13ls3[!is.na(pop13ls3$D2N),]$Zone, pop13ls3[!is.na(pop13ls3$D2N),]$Site), sd)
 dnCV <- (dnsd/dnmean)*100
 
 popdn <- summarySE(pop13ls3, measurevar="logD2N", groupvars=c("Site", "Zone")) 
@@ -1408,8 +1408,8 @@ summary(lmess)
 pop13ls3ss$Site  <- pop13ls3ss$Site[drop=TRUE]
 
 ssn <- tapply(pop13ls3ss$rankPrpnPD, list(pop13ls3ss$Zone, pop13ls3ss$Site), length)
-ssmean <- tapply(pop13ls3ss$rankPrpnPD, list(pop13ls3ss$Zone, pop13ls3ss$Site), mean)
-sssd <- tapply(pop13ls3ss$rankPrpnPD, list(pop13ls3ss$Zone, pop13ls3ss$Site), sd)
+ssmean <- tapply(pop13ls3ss$PrpnPD, list(pop13ls3ss$Zone, pop13ls3ss$Site), mean)
+sssd <- tapply(pop13ls3ss$PrpnPD, list(pop13ls3ss$Zone, pop13ls3ss$Site), sd)
 ssCV <- (sssd/ssmean)*100
 
 popss <- summarySE(pop13ls3ss, measurevar="rankPrpnPD", groupvars=c("Site", "Zone")) 
@@ -1432,6 +1432,42 @@ ggplot(data=popss, aes(x=Zone, y=rankPrpnPD, group=Site, shape=Site)) +
   scale_shape_manual(values=c(15, 8, 0, 2)) +
   theme(axis.title.y = element_text(vjust=1, face="bold", size=20),
         axis.text.y  = element_text(size=18, face="bold"))
+
+#*****************************
+#data summary
+write.table(poptgr, file = "PopSurv variable summary.csv", sep = ",", col.names = TRUE, row.names = FALSE)
+write.table(poptdd, file = "PopSurv variable summary.csv", sep = ",", col.names = TRUE, row.names = FALSE, append = TRUE)
+write.table(pophi, file = "PopSurv variable summary.csv", sep = ",", col.names = TRUE, row.names = FALSE, append = TRUE)
+write.table(popsz, file = "PopSurv variable summary.csv", sep = ",", col.names = TRUE, row.names = FALSE, append = TRUE)
+write.table(popbr, file = "PopSurv variable summary.csv", sep = ",", col.names = TRUE, row.names = FALSE, append = TRUE)
+write.table(popfr, file = "PopSurv variable summary.csv", sep = ",", col.names = TRUE, row.names = FALSE, append = TRUE)
+write.table(popdn, file = "PopSurv variable summary.csv", sep = ",", col.names = TRUE, row.names = FALSE, append = TRUE)
+write.table(popss, file = "PopSurv variable summary.csv", sep = ",", col.names = TRUE, row.names = FALSE, append = TRUE)
+
+write.table(tGRmean, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE)
+write.table(tGRsd, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(tGRCV, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(tddmean, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(tddsd, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(tddCV, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(himean, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(hisd, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(hiCV, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(szmean, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(szsd, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(szCV, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(brmean, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(brsd, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(brCV, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(frmean, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(frsd, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(frCV, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(dnmean, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(dnsd, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(dnCV, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(ssmean, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(sssd, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
+write.table(ssCV, file = "PopSurv raw variable summary.csv", sep = ",", col.names = TRUE, row.names = TRUE, append = TRUE)
 
 
 
@@ -1459,6 +1495,17 @@ cor.test(pop13ls3A1$logBranches, pop13ls3A1$rankHeight, method="pearson", na.act
 cor.test(pop13ls3A1$logBranches, pop13ls3A1$rankD2N, method="pearson", na.action="na.omit") #r=0.28 p=0.18
 cor.test(pop13ls3A1$rankD2N, pop13ls3A1$rankHeight, method="pearson", na.action="na.omit") #r=0.37 p=0.072 .
 
+plot(logFR.ALL~logSIZE, data=pop13ls3A1)
+plot(logFR.ALL~rankHeight, data=pop13ls3A1)
+plot(logFR.ALL~logBranches, data=pop13ls3A1)
+plot(logFR.ALL~rankD2N, data=pop13ls3A1) #not linear
+plot(logSIZE~rankHeight, data=pop13ls3A1)
+plot(logSIZE~logBranches, data=pop13ls3A1)
+plot(logSIZE~rankD2N, data=pop13ls3A1) #not linear
+plot(logBranches~rankHeight, data=pop13ls3A1)
+plot(logBranches~rankD2N, data=pop13ls3A1) #not linear
+plot(rankD2N~rankHeight, data=pop13ls3A1) #not linear
+
 #distributions
 hist(pop13ls3A2$rankFR.ALL)
 hist(pop13ls3A2$rankSIZE)
@@ -1476,6 +1523,16 @@ cor.test(pop13ls3A2$rankBranches, pop13ls3A2$rankHeight, method="pearson", na.ac
 cor.test(pop13ls3A2$rankBranches, pop13ls3A2$rankD2N, method="pearson", na.action="na.omit") #r= -0.18 p=0.47
 cor.test(pop13ls3A2$rankD2N, pop13ls3A2$rankHeight, method="pearson", na.action="na.omit") #r= -0.17 p=0.49 
 
+plot(rankFR.ALL~rankSIZE, data=pop13ls3A2)
+plot(rankFR.ALL~rankHeight, data=pop13ls3A2)
+plot(rankFR.ALL~rankBranches, data=pop13ls3A2)
+plot(rankFR.ALL~rankD2N, data=pop13ls3A2) #not linear
+plot(rankSIZE~rankHeight, data=pop13ls3A2)
+plot(rankSIZE~rankBranches, data=pop13ls3A2)
+plot(rankSIZE~rankD2N, data=pop13ls3A2) #not linear
+plot(rankBranches~rankHeight, data=pop13ls3A2)
+plot(rankBranches~rankD2N, data=pop13ls3A2) #not linear
+plot(rankD2N~rankHeight, data=pop13ls3A2) #not linear
 
 #BH
 #distributions
@@ -1495,6 +1552,17 @@ cor.test(pop13ls3B1$rankBranches, pop13ls3B1$logHeight, method="pearson", na.act
 cor.test(pop13ls3B1$rankBranches, pop13ls3B1$rankD2N, method="pearson", na.action="na.omit") #r=0.30 p=0.14
 cor.test(pop13ls3B1$rankD2N, pop13ls3B1$logHeight, method="pearson", na.action="na.omit") #r=0.33 p=0.102
 
+plot(logFR.ALL~rankSIZE, data=pop13ls3B1)
+plot(logFR.ALL~logHeight, data=pop13ls3B1)
+plot(logFR.ALL~rankBranches, data=pop13ls3B1)
+plot(logFR.ALL~rankD2N, data=pop13ls3B1) #not linear
+plot(rankSIZE~logHeight, data=pop13ls3B1)
+plot(rankSIZE~rankBranches, data=pop13ls3B1)
+plot(rankSIZE~rankD2N, data=pop13ls3B1) #not linear
+plot(rankBranches~logHeight, data=pop13ls3B1)
+plot(rankBranches~rankD2N, data=pop13ls3B1) #not linear
+plot(rankD2N~logHeight, data=pop13ls3B1) #not linear
+
 #distributions
 hist(pop13ls3B2$rankFR.ALL)
 hist(pop13ls3B2$logSIZE)
@@ -1512,6 +1580,16 @@ cor.test(pop13ls3B2$rankBranches, pop13ls3B2$rankHeight, method="pearson", na.ac
 cor.test(pop13ls3B2$rankBranches, pop13ls3B2$rankD2N, method="pearson", na.action="na.omit") #r=0.50 p=0.011 *
 cor.test(pop13ls3B2$rankD2N, pop13ls3B2$rankHeight, method="pearson", na.action="na.omit") #r=0.31 p=0.13 
 
+plot(rankFR.ALL~logSIZE, data=pop13ls3B2)
+plot(rankFR.ALL~rankHeight, data=pop13ls3B2)
+plot(rankFR.ALL~rankBranches, data=pop13ls3B2)
+plot(rankFR.ALL~rankD2N, data=pop13ls3B2) #not linear, no relationship
+plot(logSIZE~rankHeight, data=pop13ls3B2)
+plot(logSIZE~rankBranches, data=pop13ls3B2)
+plot(logSIZE~rankD2N, data=pop13ls3B2) 
+plot(rankBranches~rankHeight, data=pop13ls3B2)
+plot(rankBranches~rankD2N, data=pop13ls3B2) 
+plot(rankD2N~rankHeight, data=pop13ls3B2) #not linear, no relationship
 
 #DB
 #distributions
@@ -1531,6 +1609,17 @@ cor.test(pop13ls3D1$rankBranches, pop13ls3D1$rankHeight, method="pearson", na.ac
 cor.test(pop13ls3D1$rankBranches, pop13ls3D1$rankD2N, method="pearson", na.action="na.omit") #r=0.23 p=0.36
 cor.test(pop13ls3D1$rankD2N, pop13ls3D1$rankHeight, method="pearson", na.action="na.omit") #r=0.24 p=0.34
 
+plot(rankFR.ALL~rankSIZE, data=pop13ls3D1)
+plot(rankFR.ALL~rankHeight, data=pop13ls3D1)
+plot(rankFR.ALL~rankBranches, data=pop13ls3D1)
+plot(rankFR.ALL~rankD2N, data=pop13ls3D1) #not a clear relationship
+plot(rankSIZE~rankHeight, data=pop13ls3D1)
+plot(rankSIZE~rankBranches, data=pop13ls3D1)
+plot(rankSIZE~rankD2N, data=pop13ls3D1) #not a clear relationship
+plot(rankBranches~rankHeight, data=pop13ls3D1)
+plot(rankBranches~rankD2N, data=pop13ls3D1) #not linear
+plot(rankD2N~rankHeight, data=pop13ls3D1) #not linear
+
 #distributions
 hist(pop13ls3D2$rankFR.ALL)
 hist(pop13ls3D2$rankSIZE)
@@ -1548,6 +1637,16 @@ cor.test(pop13ls3D2$rankBranches, pop13ls3D2$logHeight, method="pearson", na.act
 cor.test(pop13ls3D2$rankBranches, pop13ls3D2$logD2N, method="pearson", na.action="na.omit") #r= -0.13 p=0.48 
 cor.test(pop13ls3D2$logD2N, pop13ls3D2$logHeight, method="pearson", na.action="na.omit") #r= -0.39 p=0.024 * 
 
+plot(rankFR.ALL~rankSIZE, data=pop13ls3D2)
+plot(rankFR.ALL~logHeight, data=pop13ls3D2)
+plot(rankFR.ALL~rankBranches, data=pop13ls3D2)
+plot(rankFR.ALL~logD2N, data=pop13ls3D2) #not a clear relationship
+plot(rankSIZE~logHeight, data=pop13ls3D2)
+plot(rankSIZE~rankBranches, data=pop13ls3D2)
+plot(rankSIZE~logD2N, data=pop13ls3D2) #not a clear relationship
+plot(rankBranches~logHeight, data=pop13ls3D2)
+plot(rankBranches~logD2N, data=pop13ls3D2) #not linear
+plot(logD2N~logHeight, data=pop13ls3D2) 
 
 #KB
 #distributions
@@ -1567,6 +1666,17 @@ cor.test(pop13ls3K1$rankBranches, pop13ls3K1$logHeight, method="pearson", na.act
 cor.test(pop13ls3K1$rankBranches, pop13ls3K1$rankD2N, method="pearson", na.action="na.omit") #r= -0.14 p=0.50
 cor.test(pop13ls3K1$rankD2N, pop13ls3K1$logHeight, method="pearson", na.action="na.omit") #r= -0.33 p=0.10
 
+plot(rankFR.ALL~logSIZE, data=pop13ls3K1)
+plot(rankFR.ALL~logHeight, data=pop13ls3K1)
+plot(rankFR.ALL~rankBranches, data=pop13ls3K1)
+plot(rankFR.ALL~rankD2N, data=pop13ls3K1) #not linear
+plot(logSIZE~logHeight, data=pop13ls3K1)
+plot(logSIZE~rankBranches, data=pop13ls3K1)
+plot(logSIZE~rankD2N, data=pop13ls3K1) #not linear
+plot(rankBranches~logHeight, data=pop13ls3K1)
+plot(rankBranches~rankD2N, data=pop13ls3K1) #not linear, but many points do fall in linear form
+plot(rankD2N~logHeight, data=pop13ls3K1) #not linear
+
 #distributions
 hist(pop13ls3K2$logFR.ALL)
 hist(pop13ls3K2$rankSIZE)
@@ -1584,6 +1694,16 @@ cor.test(pop13ls3K2$rankBranches, pop13ls3K2$rankHeight, method="pearson", na.ac
 cor.test(pop13ls3K2$rankBranches, pop13ls3K2$logD2N, method="pearson", na.action="na.omit") #r=0.023 p=0.91 
 cor.test(pop13ls3K2$logD2N, pop13ls3K2$rankHeight, method="pearson", na.action="na.omit") #r=0.013 p=0.95  
 
+plot(logFR.ALL~rankSIZE, data=pop13ls3K2)
+plot(logFR.ALL~rankHeight, data=pop13ls3K2)
+plot(logFR.ALL~rankBranches, data=pop13ls3K2)
+plot(logFR.ALL~logD2N, data=pop13ls3K2) #not a clear relationship
+plot(rankSIZE~rankHeight, data=pop13ls3K2)
+plot(rankSIZE~rankBranches, data=pop13ls3K2)
+plot(rankSIZE~logD2N, data=pop13ls3K2) #not a clear relationship
+plot(rankBranches~rankHeight, data=pop13ls3K2)
+plot(rankBranches~logD2N, data=pop13ls3K2) #not linear
+plot(logD2N~rankHeight, data=pop13ls3K2) #not linear
 
 #LH
 #distributions
@@ -1603,6 +1723,17 @@ cor.test(pop13ls3L1$logBranches, pop13ls3L1$rankHeight, method="pearson", na.act
 cor.test(pop13ls3L1$logBranches, pop13ls3L1$rankD2N, method="pearson", na.action="na.omit") #r=0.12 p=0.62
 cor.test(pop13ls3L1$rankD2N, pop13ls3L1$rankHeight, method="pearson", na.action="na.omit") #r=0.37 p=0.11
 
+plot(logFR.ALL~rankSIZE, data=pop13ls3L1)
+plot(logFR.ALL~rankHeight, data=pop13ls3L1)
+plot(logFR.ALL~logBranches, data=pop13ls3L1)
+plot(logFR.ALL~rankD2N, data=pop13ls3L1) #not linear
+plot(rankSIZE~rankHeight, data=pop13ls3L1)
+plot(rankSIZE~logBranches, data=pop13ls3L1)
+plot(rankSIZE~rankD2N, data=pop13ls3L1) #not linear
+plot(logBranches~rankHeight, data=pop13ls3L1)
+plot(logBranches~rankD2N, data=pop13ls3L1) #not linear, but many points do fall in linear form
+plot(rankD2N~rankHeight, data=pop13ls3L1) #not linear
+
 #distributions
 hist(pop13ls3L2$rankFR.ALL)
 hist(pop13ls3L2$rankSIZE)
@@ -1619,6 +1750,18 @@ cor.test(pop13ls3L2$rankSIZE, pop13ls3L2$rankD2N, method="pearson", na.action="n
 cor.test(pop13ls3L2$rankBranches, pop13ls3L2$logHeight, method="pearson", na.action="na.omit") #r=0.46 p=0.011 *
 cor.test(pop13ls3L2$rankBranches, pop13ls3L2$rankD2N, method="pearson", na.action="na.omit") #r=0.37 p=0.046 * 
 cor.test(pop13ls3L2$rankD2N, pop13ls3L2$logHeight, method="pearson", na.action="na.omit") #r= -0.16 p=0.40 
+
+plot(rankFR.ALL~rankSIZE, data=pop13ls3L2)
+plot(rankFR.ALL~logHeight, data=pop13ls3L2)
+plot(rankFR.ALL~rankBranches, data=pop13ls3L2)
+plot(rankFR.ALL~rankD2N, data=pop13ls3L2) #not linear
+plot(rankSIZE~logHeight, data=pop13ls3L2)
+plot(rankSIZE~rankBranches, data=pop13ls3L2)
+plot(rankSIZE~rankD2N, data=pop13ls3L2) #not linear
+plot(rankBranches~logHeight, data=pop13ls3L2)
+plot(rankBranches~rankD2N, data=pop13ls3L2) #not linear
+plot(rankD2N~logHeight, data=pop13ls3L2) #not linear
+
 
 
 #MNS
@@ -1639,6 +1782,18 @@ cor.test(pop13ls3M1$rankBranches, pop13ls3M1$rankHeight, method="pearson", na.ac
 cor.test(pop13ls3M1$rankBranches, pop13ls3M1$rankD2N, method="pearson", na.action="na.omit") #r= -0.11 p=0.76
 cor.test(pop13ls3M1$rankD2N, pop13ls3M1$rankHeight, method="pearson", na.action="na.omit") #r=0.33 p=0.36
 
+#FEW POINTS FOR ALL CORRELATIONS
+plot(rankFR.ALL~rankSIZE, data=pop13ls3M1)
+plot(rankFR.ALL~rankHeight, data=pop13ls3M1)
+plot(rankFR.ALL~rankBranches, data=pop13ls3M1)
+plot(rankFR.ALL~rankD2N, data=pop13ls3M1) #not linear
+plot(rankSIZE~rankHeight, data=pop13ls3M1)
+plot(rankSIZE~rankBranches, data=pop13ls3M1)
+plot(rankSIZE~rankD2N, data=pop13ls3M1) #not linear
+plot(rankBranches~rankHeight, data=pop13ls3M1)
+plot(rankBranches~rankD2N, data=pop13ls3M1) #not linear, but many points do fall in linear form
+plot(rankD2N~rankHeight, data=pop13ls3M1) 
+
 #distributions
 hist(pop13ls3M2$logFR.ALL)
 hist(pop13ls3M2$logSIZE)
@@ -1656,6 +1811,17 @@ cor.test(pop13ls3M2$rankBranches, pop13ls3M2$logHeight, method="pearson", na.act
 cor.test(pop13ls3M2$rankBranches, pop13ls3M2$rankD2N, method="pearson", na.action="na.omit") #r= -0.23 p=0.34 
 cor.test(pop13ls3M2$rankD2N, pop13ls3M2$logHeight, method="pearson", na.action="na.omit") #r=0.082 p=0.73 
 
+#FEW POINTS FOR ALL CORRELATIONS
+plot(logFR.ALL~logSIZE, data=pop13ls3M2)
+plot(logFR.ALL~logHeight, data=pop13ls3M2)
+plot(logFR.ALL~rankBranches, data=pop13ls3M2)
+plot(logFR.ALL~rankD2N, data=pop13ls3M2) 
+plot(logSIZE~logHeight, data=pop13ls3M2)
+plot(logSIZE~rankBranches, data=pop13ls3M2)
+plot(logSIZE~rankD2N, data=pop13ls3M2) 
+plot(rankBranches~logHeight, data=pop13ls3M2) #NOT LINEAR
+plot(rankBranches~rankD2N, data=pop13ls3M2) #not linear
+plot(rankD2N~logHeight, data=pop13ls3M2) #NOT LINEAR
 
 #TH
 #distributions
@@ -1675,6 +1841,17 @@ cor.test(pop13ls3T1$logBranches, pop13ls3T1$Height, method="pearson", na.action=
 cor.test(pop13ls3T1$logBranches, pop13ls3T1$rankD2N, method="pearson", na.action="na.omit") #r= -0.027 p=0.90
 cor.test(pop13ls3T1$rankD2N, pop13ls3T1$Height, method="pearson", na.action="na.omit") #r= -0.14 p=0.49
 
+plot(logFR.ALL~logSIZE, data=pop13ls3T1)
+plot(logFR.ALL~Height, data=pop13ls3T1)
+plot(logFR.ALL~logBranches, data=pop13ls3T1)
+plot(logFR.ALL~rankD2N, data=pop13ls3T1) #not linear
+plot(logSIZE~Height, data=pop13ls3T1)
+plot(logSIZE~logBranches, data=pop13ls3T1)
+plot(logSIZE~rankD2N, data=pop13ls3T1) #not linear
+plot(logBranches~Height, data=pop13ls3T1)
+plot(logBranches~rankD2N, data=pop13ls3T1) #not linear, but many points do fall in linear form
+plot(rankD2N~Height, data=pop13ls3T1) #NOT LINEAR
+
 #distributions
 hist(pop13ls3T2$rankFR.ALL)
 hist(pop13ls3T2$rankSIZE)
@@ -1691,3 +1868,14 @@ cor.test(pop13ls3T2$rankSIZE, pop13ls3T2$D2N, method="pearson", na.action="na.om
 cor.test(pop13ls3T2$Branches, pop13ls3T2$logHeight, method="pearson", na.action="na.omit") #r=0.78 p=<0.0001 ***
 cor.test(pop13ls3T2$Branches, pop13ls3T2$D2N, method="pearson", na.action="na.omit") #r= -0.26 p=0.201 
 cor.test(pop13ls3T2$D2N, pop13ls3T2$logHeight, method="pearson", na.action="na.omit") #r= -0.081 p=0.70 
+
+plot(rankFR.ALL~rankSIZE, data=pop13ls3T2)
+plot(rankFR.ALL~logHeight, data=pop13ls3T2)
+plot(rankFR.ALL~Branches, data=pop13ls3T2)
+plot(rankFR.ALL~D2N, data=pop13ls3T2) #not linear
+plot(rankSIZE~logHeight, data=pop13ls3T2)
+plot(rankSIZE~Branches, data=pop13ls3T2)
+plot(rankSIZE~D2N, data=pop13ls3T2) #not linear
+plot(Branches~logHeight, data=pop13ls3T2)
+plot(Branches~D2N, data=pop13ls3T2) #not linear, but many points do fall in linear form
+plot(D2N~logHeight, data=pop13ls3T2) #NOT LINEAR
